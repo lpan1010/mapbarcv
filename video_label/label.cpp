@@ -234,7 +234,7 @@ String labels_to_string(vector<Label*> &labels) {
                 cout << "debuging..." << endl;
                 cout << width << endl << height << endl;
 
-                Rect roi(l->right_bottom_point.x, l->right_bottom_point.y, width, height);
+                Rect roi(l->left_top_point.x, l->left_top_point.y, width, height);
                 if (roi.height+roi.y > img.rows || roi.width+roi.x > img.cols){
                         continue;
                 }
