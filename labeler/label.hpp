@@ -2,8 +2,8 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
 #include <errno.h>
+
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
@@ -16,32 +16,41 @@
 #include <windows.h>
 #include <strsafe.h>
 #include <tchar.h>
+#include <codecvt>
+
 #else
 #include <dirent.h>
 #endif
 
-using namespace std;
 using namespace cv;
+
+#define UNICODE 1
 
 // string和wstring的处理
 #ifndef UNICODE
-typedef std::string String;
+typedef std::string QString;
 typedef std::stringstream StringStream;
+typedef std::ifstream ifstream;
+typedef std::ofstream ofstream;
+typedef std::ostream ostream;
+typedef std::cout cout;
 #else
-typedef std::wstring String;
+typedef std::wstring QString;
 typedef std::wstringstream StringStream;
+typedef std::wifstream ifstream;
+typedef std::wofstream ofstream;
+typedef std::wostream ostream;
+#define cout std::wcout
 #endif
 
 /*
  操作系统文件接口相关
  */
 #ifdef _WIN32
-const String path_separator = "\\";
-
+const QString path_separator = TEXT("\\");
 
 // TODO tchar与string的转换问题
-int ls(String dir, vector<String> &file_names)
-{
+int ls(QString dir, vector<QString> &file_names){
         WIN32_FIND_DATA ffd;
         LARGE_INTEGER filesize;
         TCHAR szDir[MAX_PATH];
@@ -50,17 +59,16 @@ int ls(String dir, vector<String> &file_names)
         DWORD dwError=0;
         // Check that the input path plus 3 is not longer than MAX_PATH.
         // Three characters are for the "\*" plus NULL appended below.
-        StringCchLength(dir, MAX_PATH, &length_of_arg);
+        StringCchLength(dir.c_str(), MAX_PATH, &length_of_arg);
 
         if (length_of_arg > (MAX_PATH - 3)) {
                 cout << "\nDirectory path is too long." << endl;
                 return (-1);
         }
-
-        // Prepare string for use with FindFile functions.  First, copy the
+        // Prepare string for use with FindFile functions. First, copy the
         // string to a buffer, then append '\*' to the directory name.
 
-        StringCchCopy(szDir, MAX_PATH, TEXT(dir.c_str()));
+        StringCchCopy(szDir, MAX_PATH, dir.c_str());
         StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
 
         // Find the first file in the directory.
@@ -77,6 +85,7 @@ int ls(String dir, vector<String> &file_names)
                         // do nothing
                 }
                 else {
+                        //cout <<ffd.cFileName << endl;
                         file_names.push_back(ffd.cFileName);
                 }
         }
@@ -87,20 +96,21 @@ int ls(String dir, vector<String> &file_names)
                 cout << "FindFirstFile" << endl;
         }
         FindClose(hFind);
+        return 0;
 }
 #else
-const String path_separator = "/";
+const QString path_separator = "/";
 
-int ls(String dir, vector<String> &files) {
+int ls(QString dir, vector<QString> &files) {
         DIR *dp;
         struct dirent *dirp;
         if ((dp = opendir(dir.c_str())) == NULL) {
-                cout << "Error(" << errno << ") opening " << dir << endl;
+                std::cout << "Error(" << errno << ") opening " << dir << std::endl;
                 return errno;
         }
 
         while ((dirp = readdir(dp)) != NULL) {
-                String name = String(dirp->d_name);
+                QString name = QString(dirp->d_name);
                 if (name == "." || name == "..") {
                         continue;
                 }
@@ -112,5 +122,5 @@ int ls(String dir, vector<String> &files) {
 #endif
 
 class Label;
-void save_label(String &dir, String &file_name, vector<Label*> &labels);
+void save_label(QString &dir, QString &file_name, vector<Label*> &labels);
 

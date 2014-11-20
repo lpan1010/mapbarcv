@@ -13,7 +13,8 @@ class Label {
                 CvPoint left_top_point;
                 CvPoint right_bottom_point;
         public:
-                Label() :is_first_pin(true), locked(false) {
+                Label() :
+                                is_first_pin(true), locked(false) {
                 }
 
                 void print_on(Mat img) {
@@ -27,7 +28,7 @@ class Label {
                         }
                 }
 
-                String to_string() {
+                QString to_string() {
                         StringStream ss;
                         int height = right_bottom_point.y - left_top_point.y;
                         int width = right_bottom_point.x - left_top_point.x;
@@ -58,7 +59,7 @@ class Label {
 };
 
 // 不是很需要
-std::ostream& operator<<(std::ostream& os, const Label& l) {
+ostream & operator<<(ostream& os, const Label& l) {
         // write obj to stream
         int height = l.right_bottom_point.y - l.left_top_point.y;
         int width = l.right_bottom_point.x - l.left_top_point.x;
@@ -74,6 +75,9 @@ int mouse_y;
 ofstream meta_file_stream;
 Label* current_label;
 vector<Label*> * labels;
+
+// 保存最后位置的文件
+const String last_pos_file = "./last.ini";
 
 void clear_labels() {
         for (size_t i = 0; i < labels->size(); i++) {
@@ -139,8 +143,12 @@ void cancel_label() {
         current_label = new Label();
 }
 
-void quit_prog() {
+void quit_prog(QString& file_name) {
         meta_file_stream.close();
+        ofstream last_file;
+        last_file.open(last_pos_file.c_str(), std::ios::out);
+        last_file << file_name << std::endl;
+        last_file.close();
         exit(0);
 }
 
@@ -151,9 +159,32 @@ void delete_previous_label() {
         }
 }
 
-void tag_img_file(String& dir, String& file_name) {
+#ifdef _WIN32
+std::wstring s2ws(const std::string& str)
+{
+    typedef std::codecvt_utf8<wchar_t> convert_typeX;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+    return converterX.from_bytes(str);
+}
+std::string ws2s(const std::wstring& wstr)
+{
+    typedef std::codecvt_utf8<wchar_t> convert_typeX;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+    return converterX.to_bytes(wstr);
+}
+#endif
+
+void tag_img_file(QString& dir, QString& file_name) {
         clear_labels();
+        String path;
+        // TODO 如何处理QString的文件名称和imread的冲突
+#ifdef _WIN32
+        img = imread(ws2s(dir + file_name));
+#else
         img = imread(dir + file_name);
+#endif
         refresh();
         while (true) {
                 KeyAction action = get_key_seq();
@@ -165,7 +196,7 @@ void tag_img_file(String& dir, String& file_name) {
                                 cancel_label();
                                 break;
                         case Exit:
-                                quit_prog();
+                                quit_prog(file_name);
                                 break;
                         case DeleteAllLabels:
                                 clear_labels();
@@ -213,7 +244,7 @@ void label_mouse_callback(int event, int x, int y, int, void*) {
         refresh();
 }
 
-String labels_to_string(vector<Label*> &labels) {
+QString labels_to_string(vector<Label*> &labels) {
         StringStream ss;
         for (size_t i = 0; i < labels.size(); i++) {
                 Label *l = labels[i];
@@ -223,13 +254,13 @@ String labels_to_string(vector<Label*> &labels) {
         return ss.str();
 }
 
-void save_label(String& dir, String& file_name, vector<Label*> &labels) {
+void save_label(QString& dir, QString& file_name, vector<Label*> &labels) {
         if (labels.size() == 0) {
                 return;
         }
 
-        String text_line = file_name + labels_to_string(labels);
-        meta_file_stream << text_line << endl;
+        QString text_line = file_name + labels_to_string(labels);
+        meta_file_stream << text_line << std::endl;
 }
 
 void init() {
@@ -240,23 +271,40 @@ void init() {
 }
 
 int main(int argc, char *argv[]) {
+
         //asssssert(argc == 3);
-        String dir = "pics/";
-        String meta_file = "label.txt";
+        QString dir = L"pics/";
+        QString meta_file = L"label.txt";
         if (argc == 3) {
-                dir = String(argv[1]) + path_separator;
-                meta_file = String(argv[2]);
+                dir = QString(argv[1]) + path_separator;
+                meta_file = QString(argv[2]);
         }
-        meta_file_stream.open(meta_file.c_str(), ios::out | ios::app);
-        vector<String> file_names;
+
+        // 获得上次保存数据
+        ifstream last_file;
+        QString last;
+        last_file.open(last_pos_file.c_str(), std::ios::in);
+        getline(last_file, last);
+        last_file.clear();
+
+        meta_file_stream.open(meta_file.c_str(), std::ios::out | std::ios::app);
+        vector<QString> file_names;
         ls(dir, file_names);
         sort(file_names.begin(), file_names.end());
 
         init();
-        for (size_t i = 0; i < file_names.size(); i++) {
+
+        vector<QString>::iterator it = find(file_names.begin(), file_names.end(),
+                        last);
+        QString qs = (*it);
+        if (qs.compare(last) != 0){
+                it = file_names.begin();
+        }
+        for (; it != file_names.end(); it++) {
                 init();
-                cout << file_names[i] << endl;
-                tag_img_file(dir, file_names[i]);
+                QString qs = (*it);
+                cout << qs << std::endl;
+                tag_img_file(dir, qs);
         }
         return 0;
 }
