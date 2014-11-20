@@ -179,7 +179,6 @@ std::string ws2s(const std::wstring& wstr)
 void tag_img_file(QString& dir, QString& file_name) {
         clear_labels();
         String path;
-        // TODO 如何处理QString的文件名称和imread的冲突
 #ifdef _WIN32
         img = imread(ws2s(dir + file_name));
 #else
@@ -272,15 +271,25 @@ void init() {
 
 int main(int argc, char *argv[]) {
 
-        //asssssert(argc == 3);
+#ifdef _WIN32
         QString dir = L"pics/";
         QString meta_file = L"label.txt";
+#else
+        QString dir = "pics/";
+        QString meta_file = "label.txt";
+#endif
         if (argc == 3) {
+#ifdef _WIN32
+                dir = s2ws(String(argv[1]) + path_separator);
+                meta_file = s2ws(String(argv[2]));
+#else
                 dir = QString(argv[1]) + path_separator;
                 meta_file = QString(argv[2]);
+#endif
         }
 
         // 获得上次保存数据
+        std::cout << "Reading the last label pic..." << std::endl;
         ifstream last_file;
         QString last;
         last_file.open(last_pos_file.c_str(), std::ios::in);
@@ -292,18 +301,22 @@ int main(int argc, char *argv[]) {
         ls(dir, file_names);
         sort(file_names.begin(), file_names.end());
 
+        std::cout << "Initializing..." << std::endl;
         init();
 
+        std::cout << "Finding the last pic..." << std::endl;
         vector<QString>::iterator it = find(file_names.begin(), file_names.end(),
                         last);
-        QString qs = (*it);
-        if (qs.compare(last) != 0){
+        if (it == file_names.end()){
+                std::cout << "Last pic not found, start from first pic." << std::endl;
                 it = file_names.begin();
+        }else{
+                std::cout << "Last pic found." << std::endl;
         }
         for (; it != file_names.end(); it++) {
                 init();
                 QString qs = (*it);
-                cout << qs << std::endl;
+                std::cout << qs << std::endl;
                 tag_img_file(dir, qs);
         }
         return 0;

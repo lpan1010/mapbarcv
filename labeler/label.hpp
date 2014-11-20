@@ -27,13 +27,12 @@ using namespace cv;
 #define UNICODE 1
 
 // string和wstring的处理
-#ifndef UNICODE
+#ifndef _WIN32
 typedef std::string QString;
 typedef std::stringstream StringStream;
 typedef std::ifstream ifstream;
 typedef std::ofstream ofstream;
 typedef std::ostream ostream;
-typedef std::cout cout;
 #else
 typedef std::wstring QString;
 typedef std::wstringstream StringStream;
@@ -47,7 +46,7 @@ typedef std::wostream ostream;
  操作系统文件接口相关
  */
 #ifdef _WIN32
-const QString path_separator = TEXT("\\");
+const string path_separator = "\\";
 
 // TODO tchar与string的转换问题
 int ls(QString dir, vector<QString> &file_names){
