@@ -1,5 +1,5 @@
 /*
- * tl_detector_night.cpp
+ * tl_detector_night.hpp
  *
  *  Created on: 2014年11月19日
  *      Author: qin

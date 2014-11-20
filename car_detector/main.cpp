@@ -8,6 +8,7 @@
 #include "rules/tail_light_detector.hpp"
 #include "main.hpp"
 #include "rules/tl_detector_night.hpp"
+#include "rules/plate_detector.hpp"
 
 SimpleBlobDetector::Params params;
 Ptr<FeatureDetector> blob_detector;
@@ -228,9 +229,10 @@ Mat CannyThreshold(Mat &gray)
 	return detected_edges;
 }
 
-void car_rear_dection_ROI(Mat& frame, TLDetectorNight& de){
+void car_rear_dection_ROI(Mat& frame, PlateDetector& de){
         Mat gray, hsv, canny, blured;
         list < pair<KeyPoint, KeyPoint> > ret;
+        vector <KeyPoint> points;
         cvtColor(frame, gray, CV_BGR2GRAY);
 	canny = CannyThreshold(gray);
 
@@ -238,19 +240,22 @@ void car_rear_dection_ROI(Mat& frame, TLDetectorNight& de){
 	// hsv空间，以更好的过滤红色
 	blur(frame, blured, Size(5,5));
 	cvtColor(blured, hsv, CV_BGR2HSV);
-        de.detector(frame, blured, gray, hsv, canny, ret);
-        for (std::list<pair<KeyPoint, KeyPoint> >::iterator it=ret.begin(); it != ret.end(); ++it){
-                KeyPoint& first = (*it).first;
-		KeyPoint& second = (*it).second;
-                line(frame, Point(first.pt.x, first.pt.y), Point(second.pt.x, second.pt.y), Scalar(0,0, 255), 10);
-        }
+	de.detector(frame, blured, gray, hsv, canny, points);
+	drawKeypoints(frame, points, frame);
+//        de.detector(frame, blured, gray, hsv, canny, ret);
+//        for (std::list<pair<KeyPoint, KeyPoint> >::iterator it=ret.begin(); it != ret.end(); ++it){
+//                KeyPoint& first = (*it).first;
+//		KeyPoint& second = (*it).second;
+//                line(frame, Point(first.pt.x, first.pt.y), Point(second.pt.x, second.pt.y), Scalar(0,0, 255), 10);
+//        }
 }
 
 int main(int argc, char **argv) {
         TailLightDetector de;
         TLDetectorNight tldn;
+        PlateDetector pd;
 	string videoFile = "/srv/ftp/videos/nj/IMG_0593.MOV";
-	videoFile = "/home/qin/car_rear/video/141027/1414317139.mov";
+	//videoFile = "/home/qin/car_rear/video/141027/1414317139.mov";
 	VideoCapture video;
 	Mat frame, gray, canny, hsv;
 
@@ -265,7 +270,7 @@ int main(int argc, char **argv) {
 		if(frame.empty())
 			break;
 		resize(frame, frame, Size(640, 360));
-		car_rear_dection_ROI(frame, tldn);
+		car_rear_dection_ROI(frame, pd);
 		imshow("output",frame);
 		if (done){
 			waitKey(1);
