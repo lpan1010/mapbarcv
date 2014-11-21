@@ -26,7 +26,8 @@ private:
 	int max_right_step = 0;
 public:
 	void markLaneDetection(Mat& inputImage, Mat& outputImage, int laneLen);
-	int laneDetection(Mat& inputImage, Mat& inputImage_gray,LogCPlus& log);
+//	int laneDetection(Mat& inputImage, Mat& inputImage_gray,LogCPlus& log);
+	int laneDetection(Mat& inputImage, Mat& inputImage_gray,std::string imageName="");
 	void drawLane(Mat& image, const double& rho, const double& theta);
 
 };

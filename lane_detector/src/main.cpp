@@ -51,7 +51,7 @@ int testVideo() {
 		 imwrite("/home/kangyong/image/realroadImage/"+name.str()+".jpg",src);
 		 **/
 		clock_t begin = clock();
-		laneDet.laneDetection(dst1, src_gray, log);
+		laneDet.laneDetection(dst1, src_gray);
 		cout << 1000 * (double) (clock() - begin) / CLOCKS_PER_SEC << endl;
 		imshow("output", src);
 		waitKey(2);
@@ -90,7 +90,7 @@ int testPicture() {
 
 	 */
 	Mat dst1(resize_img, Rect(0, rh * resize_img.rows, resize_img.cols, (1 - rh) * resize_img.rows));
-	laneDet.laneDetection(dst1, src_gray, log);
+	laneDet.laneDetection(dst1, src_gray);
 	imshow("picOutput", resize_img);
 	waitKey(0);
 
@@ -116,23 +116,44 @@ void test_hog() {
 //	sstr<<value;
 //	return sstr.str();
 //}
+
 void testBenchmark() {
 	Mat inputImage = imread("/home/kangyong/image/realroadImage/8559.jpg");
-	benchmark bm;
-	bm.loadBenchmark("/home/kangyong/image/lane_labeler/imageTag.txt");
+	benchmark::getInstance().loadBenchmark("/home/kangyong/image/lane_labeler/imageTag.txt");
 	Point p1;
 	p1.x = 950;
 	p1.y = 715;
 	Point p2;
 	p2.x = 627;
 	p2.y = 337;
-//	bm.evaluate("8559.jpg", p1, p2);
-	line(inputImage, p1, p2, Scalar(0, 255, 0), 8, CV_AA);
-	imshow("outputImage",inputImage);
-	waitKey(0);
+//	benchmark::createInstance().evaluate("8559.jpg", p1, p2);
+
+//	line(inputImage, p1, p2, Scalar(0, 255, 0), 8, CV_AA);
+//	imshow("outputImage", inputImage);
+//	waitKey(0);
+}
+void testPictures(const string inputFolder, const string txtName) {
+	ifstream inFile((inputFolder + txtName).c_str());
+	string line, imageName;
+	while (getline(inFile, line)) {
+		imageName = line.substr(0, line.find(" "));
+
+		cout << endl << "image name = " << imageName << endl;
+		Mat dst1, src_gray;
+		dst1 = imread(inputFolder + imageName);
+		laneDet.laneDetection(dst1, src_gray, imageName);
+
+		imshow("picOutput", dst1);
+		waitKey(0);
+	}
 }
 int main(int argc, char **argv) {
-	testBenchmark();
+//	testBenchmark();
+	string folder = "/home/kangyong/image/realroadImage/";
+	string txt = "imageTag.txt";
+	benchmark::getInstance().loadBenchmark("/home/kangyong/image/lane_labeler/imageTag.txt");
+	testPictures(folder, txt);
+
 //	testVideo();
 
 //	testPicture();
