@@ -4,6 +4,7 @@
 #include "opencv2/core/core.hpp"
 
 #include<algorithm>
+#include "benchmark.h"
 
 #include <iostream>
 #include<vector>
@@ -66,7 +67,7 @@ list<double> list_left;
 list<double> list_right;
 //std::queue<int> q;
 size_t cou = 0;
-int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus& log) {
+int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, string imageName) {
 	if (!inputImage.data) {
 		return -1;
 	}
@@ -91,7 +92,7 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 	HoughLines(detected_edges, lines, 1, CV_PI / 180, inputImage.cols / 12, 0, 0);
 
 	//test
-	cout << "lines number: " << lines.size() << endl;
+//	cout << "lines number: " << lines.size() << endl;
 	vector<double> r_vector;
 	vector<double> l_vector;
 	map<double, double> my_map;
@@ -109,7 +110,7 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 			r_vector.push_back(theta);
 		}
 		my_map[theta] = rho;
-		drawLane(inputImage, rho, theta);
+//		drawLane(inputImage, rho, theta);
 	}
 	sort(l_vector.begin(), l_vector.end());
 	sort(r_vector.begin(), r_vector.end());
@@ -134,6 +135,7 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 			double mean = sum / queue_container_number;
 			if (abs(mean - rho) > 70) {		//if difference is too big with last step, using last step point.
 				line(inputImage, l_pt1, l_pt2, Scalar(0, 255, 0), 3, CV_AA);
+				benchmark::getInstance().evaluate(imageName, l_pt1, l_pt2, inputImage);
 				//compare
 				Point pt1, pt2;
 				double a = cos(theta), b = sin(theta);
@@ -143,6 +145,7 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 				pt2.x = cvRound(x0 - 5000 * (-b));
 				pt2.y = cvRound(y0 - 5000 * (a));
 				line(inputImage, pt1, pt2, Scalar(0, 255, 255), 3, CV_AA);
+				benchmark::getInstance().evaluate(imageName, pt1, pt2, inputImage);
 				//end compare
 			} else {
 				Point pt1, pt2;
@@ -153,6 +156,7 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 				pt2.x = cvRound(x0 - 5000 * (-b));
 				pt2.y = cvRound(y0 - 5000 * (a));
 				line(inputImage, pt1, pt2, Scalar(0, 255, 0), 3, CV_AA);
+				benchmark::getInstance().evaluate(imageName, pt1, pt2, inputImage);
 				l_pt1 = pt1;
 				l_pt2 = pt2;
 				max_left_step = 0;
@@ -167,8 +171,9 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 			pt1.y = cvRound(y0 + 5000 * (a));
 			pt2.x = cvRound(x0 - 5000 * (-b));
 			pt2.y = cvRound(y0 - 5000 * (a));
-			cout<<pt1.x<<","<<pt1.y<<","<<pt2.x<<","<<pt2.y<<endl;
+			cout << pt1.x << "," << pt1.y << "," << pt2.x << "," << pt2.y << endl;
 			line(inputImage, pt1, pt2, Scalar(0, 255, 0), 3, CV_AA);
+			benchmark::getInstance().evaluate(imageName, pt1, pt2, inputImage);
 			l_pt1 = pt1;
 			l_pt2 = pt2;
 			max_left_step = 0;
@@ -179,6 +184,7 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 	} else {
 		if (max_left_step < max_step)
 			line(inputImage, l_pt1, l_pt2, Scalar(0, 255, 0), 3, CV_AA);
+
 		max_left_step++;
 	}
 
@@ -186,13 +192,13 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 		double theta = r_vector[r_vector.size() / 2];
 		double rho = my_map[r_vector[r_vector.size() / 2]];
 		if (r_vector.size() > 5) {
-				if (list_right.size() < queue_container_number) {
-					list_right.push_back(rho);
-				} else {
-					list_right.pop_front();
-					list_right.push_back(rho);
-				}
+			if (list_right.size() < queue_container_number) {
+				list_right.push_back(rho);
+			} else {
+				list_right.pop_front();
+				list_right.push_back(rho);
 			}
+		}
 		debugfileName += "r_" + to_string(r_vector.size()) + "_" + to_string(rho) + "_" + to_string(theta);
 		cout << "r_vector.size() = " << r_vector.size() << " ,r_vector.size()/2 = " << r_vector.size() / 2 << ", rho = " << rho << ",theta=" << theta << endl;
 		Point pt1, pt2;
@@ -202,8 +208,9 @@ int LaneDetection::laneDetection(Mat& inputImage, Mat& inputImage_gray, LogCPlus
 		pt1.y = cvRound(y0 + 5000 * (a));
 		pt2.x = cvRound(x0 - 5000 * (-b));
 		pt2.y = cvRound(y0 - 5000 * (a));
-		cout<<pt1.x<<","<<pt1.y<<","<<pt2.x<<","<<pt2.y<<endl;
+		cout << pt1.x << "," << pt1.y << "," << pt2.x << "," << pt2.y << endl;
 		line(inputImage, pt1, pt2, Scalar(0, 255, 0), 3, CV_AA);
+		benchmark::getInstance().evaluate(imageName, pt1, pt2, inputImage);
 		r_pt1 = pt1;
 		r_pt2 = pt2;
 		max_right_step = 0;
