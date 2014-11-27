@@ -15,9 +15,9 @@ class Label {
         private:
                 bool is_first_pin;
                 bool locked;
+        public:
                 CvPoint left_top_point;
                 CvPoint right_bottom_point;
-        public:
                 Label() :
                                 is_first_pin(true), locked(false) {
                 }

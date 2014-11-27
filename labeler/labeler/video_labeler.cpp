@@ -68,19 +68,22 @@ void VideoLabeler::save_current_progress(String& video_name, int& frame){
 }
 
 bool VideoLabeler::label_video(String& video_file_path,
-                int& frame_num,
+                int& frame_num_start_from,
                 String& meta_file) {
         if (!load_video(video_file_path)){
                 return false;
         }
-        jump_to_frame(frame_num);
+        jump_to_frame(frame_num_start_from);
         open_meta_file(meta_file);
         fl = FrameLabeler(meta_file_stream);
 
-        for(int frame_num = 0;; ++frame_num){
+        for(int frame_num = frame_num_start_from;; ++frame_num){
                 video >> frame;
-		if (frame.empty())
-			break;
+		if (frame.empty()){
+		        cout << "End of video: " << video_file_path << endl;
+		        break;
+		}
+
 		if (!fl.label_frame(frame, video_file_path, frame_num)){
 		        save_current_progress(video_file_path, frame_num);
 		        return false;
@@ -90,6 +93,10 @@ bool VideoLabeler::label_video(String& video_file_path,
 }
 
 void VideoLabeler::jump_to_frame(int& frame_num) {
+        int frame_count= video.get(CV_CAP_PROP_FRAME_COUNT);
+        if (frame_count <= frame_num){
+                frame_num = frame_count - 1;
+        }
         video.set(CV_CAP_PROP_POS_FRAMES,frame_num);
 }
 

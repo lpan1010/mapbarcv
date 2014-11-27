@@ -2,16 +2,16 @@ all: labeler
 	@echo "Compile Done."
 
 labeler: frame_labeler.o video_labeler.o config_file_reader.o label.o main.o global.o
-	g++ -o labeler.exe main.o frame_labeler.o video_labeler.o config_file_reader.o label.o global.o
+	g++ -g -o labeler.exe main.o frame_labeler.o video_labeler.o config_file_reader.o label.o global.o -lm -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_objdetect
 
 global.o: global.cpp global.hpp
-	g++ -c global.cpp
+	g++ -c global.cpp -lm -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_objdetect
 
 os.o: os.cpp os.hpp
-	g++ -c os.cpp
+	g++ -c os.cpp -lm -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_objdetect
 
 utils.o: utils.cpp
-	g++ -c utils.cpp
+	g++ -c utils.cpp -lm -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_objdetect
 
 main.o: main.cpp
 	g++ -c main.cpp -lm -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_features2d -lopencv_objdetect

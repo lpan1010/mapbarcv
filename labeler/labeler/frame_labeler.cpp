@@ -16,7 +16,9 @@ void FrameLabeler::init() {
 bool FrameLabeler::label_frame(const Mat& frame, const String& video_file_name,
                 const int& frame_num) {
         this->frame = &frame;
+
         clear_labels();
+
         return label_loop(frame, video_file_name, frame_num);
 }
 
@@ -47,15 +49,17 @@ KeyAction FrameLabeler::get_key_seq() {
         return ret;
 }
 
-
-
-
 void FrameLabeler::clear_labels() {
-        for (size_t i = 0; i < labels->size(); i++) {
-                delete (*labels)[i];
+        if (labels != NULL) {
+                for (size_t i = 0; i < labels->size(); i++) {
+                        delete (*labels)[i];
+                }
         }
+
         delete labels;
-        delete current_label;
+        if (current_label != NULL) {
+                delete current_label;
+        }
 
         labels = new vector<Label*>();
         current_label = new Label();
@@ -63,11 +67,11 @@ void FrameLabeler::clear_labels() {
 
 void FrameLabeler::quit_prog(const QString& file_name, const int& frame_num) {
         /*(*meta_file_stream).close();
-        ofstream last_file;
-        last_file.open(last_pos_file.c_str(), std::ios::out);
-        last_file << file_name << std::endl;
-        last_file.close();
-        exit(0);*/
+         ofstream last_file;
+         last_file.open(last_pos_file.c_str(), std::ios::out);
+         last_file << file_name << std::endl;
+         last_file.close();
+         exit(0);*/
 }
 QString FrameLabeler::labels_to_string(const vector<Label*> &labels) {
         StringStream ss;
@@ -75,6 +79,14 @@ QString FrameLabeler::labels_to_string(const vector<Label*> &labels) {
                 Label *l = labels[i];
                 ss << " ";
                 ss << l->to_string();
+                /*Rect rect;
+                rect.x = l->left_top_point.x;
+                rect.y = l->left_top_point.y;
+                rect.height = l->right_bottom_point.y - l->left_top_point.y;
+                rect.width = l->right_bottom_point.x - l->left_top_point.x;
+                Mat sm = Mat(*frame, rect);
+                imshow("Rect", sm);
+                waitKey();*/
         }
         return ss.str();
 }
@@ -87,6 +99,7 @@ void FrameLabeler::save_label(const String& video_file_name,
         StringStream ss;
         ss << video_file_name << ':' << frame_num << labels_to_string(labels);
         (*meta_file_stream) << ss.str() << std::endl;
+
 }
 
 void FrameLabeler::delete_previous_label() {
