@@ -202,7 +202,14 @@ class ValueDFA: public DFA<char> {
                                 // null
                         }
                 }
-}
+                void reset() {
+                }
+
+                Value Shit(){
+                        return Value::nil;
+                }
+};
+
 class ObjectDFA: public DFA<char> {
 
 };
@@ -247,7 +254,7 @@ class ArrayDFA: public DFA<char> {
 
 };
 
-int main(int argc, char **argv) {
+/*int main(int argc, char **argv) {
         strstream ssi("199999");
         IntDFA id;
         StringDFA sd;
@@ -263,4 +270,4 @@ int main(int argc, char **argv) {
                 v = sd.shit();
                 cout << v << endl;
         }
-}
+}*/

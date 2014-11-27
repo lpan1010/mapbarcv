@@ -131,7 +131,7 @@ std::ostream& operator<<(std::ostream& os, Value& v) {
         return os;
 }
 
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
         string kk = "abcedfghijikl";
         map<string, Value> m;
         m["a"] = Value::nil;
@@ -145,4 +145,4 @@ int main(int argc, char *argv[]) {
         std::cout << obj << std::endl;
         Value v(&kk);
         return 0;
-}
+}*/
