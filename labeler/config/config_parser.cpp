@@ -180,32 +180,43 @@ class ValueDFA: public DFA<char> {
         public:
                 bool eat(stream<char>& foods) {
                         char food;
+                        bool ret;
                         foods.next(food);
                         if (food == '\"') {
                                 foods.back(food);
                                 // String
                         } else if (in_range(food, '0', '9' + 1)
                                         || food == '-') {
-                                foods.back(food);
                                 // Int
+                                foods.back(food);
+                                IntDFA idfa;
+                                if (!idfa.eat(foods)){
+                                        ret = false;
+                                }
                         } else if (food == '{') {
                                 foods.back(food);
                                 // Object
                         } else if (food == '[') {
                                 foods.back(food);
                                 // Array
-                        } else if (food == 'f' || food == 'true') {
+                        } else if (food == 'f' || food == 't') {
                                 foods.back(food);
                                 // bool
                         } else if (food == 'n') {
                                 foods.back(food);
                                 // null
+                        }else{
+                                // Error
                         }
+                }
+
+                void shit_value(stream<char>& foods, DFA<> dfa){
+
                 }
                 void reset() {
                 }
 
-                Value Shit(){
+                Value shit(){
                         return Value::nil;
                 }
 };
