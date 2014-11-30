@@ -16,6 +16,7 @@ class Label {
                 bool is_first_pin;
                 bool locked;
         public:
+
                 CvPoint left_top_point;
                 CvPoint right_bottom_point;
                 Label() :
@@ -27,7 +28,7 @@ class Label {
                                 rectangle(img, left_top_point,
                                                 right_bottom_point,
                                                 Scalar(0, 0, 255));
-                        } else {
+                        } else if(!is_first_pin){
                                 circle(img, left_top_point, 2,
                                                 Scalar(0, 0, 255));
                         }

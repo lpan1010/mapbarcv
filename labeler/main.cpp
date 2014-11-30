@@ -42,6 +42,8 @@ int main(int argc, char *argv[]) {
                 it++;
         }else{
                 cout << "Last progress not found. Start from the beginning." << endl;
+                it = video_names.begin();
+                cout << video_names.size()<< endl;
         }
 
         frame_num = 0;

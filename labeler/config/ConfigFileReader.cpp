@@ -43,7 +43,7 @@ bool ConfigFileReader::read(const string& file, string& video, int& frame_num) {
         if (line.empty()){
                 return false;
         }
-        split(line, ':', segs);
+        split(line, '@', segs);
         video = segs[0];
         frame_num = atoi(segs[1].c_str());
         cout << "Last progress ----> " << video << ':' << frame_num << endl;

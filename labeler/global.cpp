@@ -19,6 +19,8 @@ Label* current_label;
 
 VideoLabeler vl;
 
+
+
 const string CONFIG_FILE = "./config.conf";
 const string PROGRESS_FILE = "./last.conf";
 string META_FILE = "./labels.conf";

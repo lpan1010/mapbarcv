@@ -116,6 +116,7 @@ void FrameLabeler::cancel_label() {
 void FrameLabeler::refresh() {
         Mat output = frame->clone();
         current_label->print_on(output);
+        
         for (size_t i = 0; i < labels->size(); ++i) {
                 (*labels)[i]->print_on(output);
         }
@@ -135,6 +136,8 @@ bool FrameLabeler::label_loop(const Mat& frame, const String& video_file_name,
                         case SaveAndNext:
                                 save_label(video_file_name, frame_num,
                                                 (*labels));
+                                clear_labels();
+                                //refresh();
                                 return true;
                         case CancelCurrentLabel:
                                 cancel_label();

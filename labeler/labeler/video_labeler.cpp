@@ -63,7 +63,7 @@ void VideoLabeler::open_meta_file(String& meta_file_path) {
 void VideoLabeler::save_current_progress(String& video_name, int& frame){
         ofstream progress;
         progress.open(PROGRESS_FILE.c_str(), std::ios::out);
-        progress << video_name << ':' << frame << endl;
+        progress << video_name << '@' << frame << endl;
         progress.close();
 }
 
@@ -77,17 +77,22 @@ bool VideoLabeler::label_video(String& video_file_path,
         open_meta_file(meta_file);
         fl = FrameLabeler(meta_file_stream);
 
+        video >> frame;
         for(int frame_num = frame_num_start_from;; ++frame_num){
-                video >> frame;
+
 		if (frame.empty()){
 		        cout << "End of video: " << video_file_path << endl;
 		        break;
 		}
-
+                
 		if (!fl.label_frame(frame, video_file_path, frame_num)){
 		        save_current_progress(video_file_path, frame_num);
 		        return false;
 		}
+                frame_num += 23;
+                jump_to_frame(frame_num);
+                video >> frame;
+                refresh();
         }
         return true;
 }
