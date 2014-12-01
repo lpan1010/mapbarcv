@@ -21,6 +21,6 @@ VideoLabeler vl;
 
 
 
-const string CONFIG_FILE = "./config.conf";
-const string PROGRESS_FILE = "./last.conf";
-string META_FILE = "./labels.conf";
+const string CONFIG_FILE = "./config.txt";
+const string PROGRESS_FILE = "./last.txt";
+string META_FILE = "./labels.txt";
