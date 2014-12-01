@@ -1,7 +1,7 @@
 /*
  * global.cpp
  *
- *  Created on: 2014年11月27日
+ *  Created on: 2014,11,27
  *      Author: qin
  */
 
@@ -17,10 +17,10 @@ int mouse_y;
 vector<Label*> * labels;
 Label* current_label;
 
-VideoLabeler vl;
+//VideoLabeler vl;
 
-
-
-const string CONFIG_FILE = "./config.txt";
-const string PROGRESS_FILE = "./last.txt";
+string CONFIG_FILE = "./config.txt";
+string PROGRESS_FILE = "./last.txt";
 string META_FILE = "./labels.txt";
+string PICS_FILE = "/list.txt";
+FrameLabeler fl(META_FILE);

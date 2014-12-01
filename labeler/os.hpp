@@ -1,7 +1,7 @@
 /*
  * os.h
  *
- *  Created on: 2014年11月27日
+ *  Created on: 2014,11,27
  *      Author: qin
  */
 
@@ -13,7 +13,6 @@
 #include <iostream>
 #include <errno.h>
 
-// 操作系统相关头文件
 #include <windows.h>
 #include <tchar.h>
 #include <strsafe.h>
