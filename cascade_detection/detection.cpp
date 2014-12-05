@@ -18,7 +18,7 @@ using namespace cv;
 void detectAndDisplay(Mat frame);
 
 /** 全局变量 */
-string cascade_name = "/tmp/model_cascade/cascade.xml";
+string cascade_name = "/home/qin/cv_model/cascade.xml";
 CascadeClassifier car_cascade;
 string window_name = "Capture - Car detection";
 
@@ -45,17 +45,25 @@ int main(int argc, const char** argv) {
 
         //-- 2. 载入图像
         string pic = argv[1];
-        frame = cv::imread(pic);
-        //cvtColor(frame, gray, CV_BGR2GRAY);
+
+        VideoCapture vc;
+        vc.open(pic);
+
+        //frame = cv::imread(pic);
+
+        //cvtColor(frame, gray, CV_RGB2GRAY);
 	//edge = CannyThreshold(gray);
 	//cvtColor(edge, edge, CV_GRAY2BGR);
         //resize(edge, edge, Size(frame.cols/2, frame.rows/2));
         //detectAndDisplay(edge);
         //-- 3. 对当前帧使用分类器进行检测
-        resize(frame, frame, Size(frame.cols/8, frame.rows/8));
-        detectAndDisplay(frame);
-
-        waitKey();
+        vc >> frame;
+        while(!frame.empty()){
+                resize(frame, frame, Size(frame.cols/3, frame.rows/3));
+                detectAndDisplay(frame);
+                vc >> frame;
+                waitKey(1);
+        }
         return 0;
 }
 
@@ -71,16 +79,17 @@ void detectAndDisplay(Mat frame) {
         car_cascade.detectMultiScale(
                         frame_gray,
                         cars,
-                        1.1,
-                        1,
+                        1.2,
+                        10,
                         0 | CV_HAAR_SCALE_IMAGE | CV_HAAR_DO_CANNY_PRUNING,
-                        Size(10, 10),
-                        Size(100, 100));
-        cout << cars.size()<< endl;
+                        Size(1, 1),
+                        Size(200, 200));
+        //cout << cars.size()<< endl;
         for (size_t i = 0; i < cars.size(); i++) {
                 rectangle(frame, cars[i], Scalar(0, 0, 255));
         }
         //-- 显示结果图像
         imshow(window_name, frame);
+        //waitKey();
 }
 

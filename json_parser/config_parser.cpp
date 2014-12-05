@@ -57,10 +57,10 @@ class strstream: public stream<char> {
 template<typename T> class DFA {
         public:
                 //virtual bool eat(stream<T>& foods) = 0;
-                virtual Value& eat(stream<T>& foods) = 0;
+                virtual Value* eat(stream<T>& foods) = 0;
 
         protected:
-                virtual Value& shit() = 0;
+                virtual Value* shit() = 0;
                 virtual void wipe_ass() = 0;
 
                 bool in_range(const T& a, const T& min, const T& max) {
@@ -230,39 +230,44 @@ class ObjectDFA: public DFA<char> {
 class ArrayDFA: public DFA<char> {
         public:
                 Value* eat(stream<char>& foods) {
+                        poo = new vector<Value*>();
+
                         ValueDFA vdfa;
                         char food;
-                        wipe_ass();
 
                         foods.next(food);
                         if (food != '[') {
                                 foods.back(food);
-                                return false;
+                                return NULL;
                         }
                         while (foods.next(food)) {
                                 // TODO value dfa
+
                                 Value* v = vdfa.eat(foods);
                                 if (v == NULL){
                                         return NULL;
                                 }else{
-
+                                        cout << *v << endl;
+                                        poo->push_back(v);
                                 }
                                 if (food == ','){
                                         continue;
                                 }else if(food == ']'){
                                         // TODO we are done?
-                                        return NULL;
+                                        return shit();
                                 }else {
                                         // TODO handle error
                                 }
                         }
-                        return false;
+                        return NULL;
                 }
 
         private:
                 Value* shit() {
                         //TODO err
-                        return new Value(poo);
+                        Value* ret = new Value(poo);
+                        wipe_ass();
+                        return ret;
                 }
 
                 void wipe_ass() {
@@ -270,7 +275,7 @@ class ArrayDFA: public DFA<char> {
                         //poo.clear();
                 }
 
-                vector<Value>* poo;
+                vector<Value*>* poo;
 
 };
 
@@ -278,15 +283,37 @@ int main(int argc, char **argv) {
         strstream ssi("199999");
         IntDFA id;
         StringDFA sd;
-        Value* v;
-        v = id.eat(ssi);
-        if (v != NULL){
-                cout << *v << endl;
-        }
-        delete v;
-        strstream sss("\"abckdf\nkk\"");
-        v = sd.eat(sss);
-        if (v != NULL){
-                cout << *v << endl;
-        }
+        ArrayDFA ad;
+//        Value* v;
+//        v = id.eat(ssi);
+//        if (v != NULL){
+//                cout << *v << endl;
+//        }
+//        delete v;
+//
+//        strstream sss("\"abckdf\nkk\"");
+//        v = sd.eat(sss);
+//        if (v != NULL){
+//                //cout << *(v->s)<<endl;
+//                cout << *v << endl;
+//        }
+//
+//        Value i(123);
+//        string si = "asdf";
+//        Value s(&si);
+//        vector<Value*> vec;
+//        vec.push_back(&s);
+//        vec.push_back(&i);
+//
+//        string st = "fofo";
+//        s.s = &st;
+//        i.i = 321;
+//        cout << *vec[0] << endl;
+//        cout << *vec[1] << endl;
+        cout << "Array:" << endl;
+        strstream ssa("[123,123]");
+
+        Value* a =ad.eat(ssa);
+        cout << *a << endl;
+        cout << "DONE" << endl;
 }
