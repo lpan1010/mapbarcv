@@ -13,31 +13,39 @@ ObjectDFA::ObjectDFA(){
 ObjectDFA::~ObjectDFA(){
 }
 
-Value* ObjectDFA::eat(stream<char>& foods){
+void ObjectDFA::clear(){
+        if (poo == NULL) {
+                return;
+        }
+        for (map<string, Value*>::iterator it = poo->begin(); it != poo->end(); ++it) {
+                it->second->clear();
+        }
+        delete poo;
+        poo = NULL;
+}
+
+Value* ObjectDFA::eat(stream<char>& foods, char& appetizer){
+        if (appetizer != '{') {
+                foods.back(appetizer);
+                return NULL;
+        }
         
         StringDFA sdfa;
         ValueDFA vdfa;
-        char food;
-
-        foods.next(food);
-        if (food != '{') {
-
-                foods.back(food);
-                return NULL;
-        }
         wipe_ass();
+        
+        poo = new map<string, Value*>();
+        char food;
         while (foods.next(food)) {
                 if (food == ',') {
                         continue;
                 } else if (food == '}') {
                         return shit();
-                } else {
-                        foods.back(food);
                 }
-
                 // Parse the key part
-                Value* key_value = sdfa.eat(foods);
+                Value* key_value = sdfa.eat(foods, food);
                 if (key_value == NULL){
+                        clear();
                         return NULL;
                 }
                 string key(*(key_value->s));
@@ -45,30 +53,32 @@ Value* ObjectDFA::eat(stream<char>& foods){
 
                 foods.next(food);
                 if (food != ':'){
+                        clear();
                         return NULL;
                 }
 
                 // Parse the value part
-                Value* value = vdfa.eat(foods);
+                if (!foods.next(food)){ clear();return NULL;}
+                Value* value = vdfa.eat(foods, food);
                 if (value == NULL) {
+                        clear();
                         return NULL;
                 } else {
-                        //cout << key << " : " << *value << endl;
-                        poo[key] = value;
+                        (*poo)[key] = value;
                 }
         }
+        clear();
         return NULL;
 }
 
-Value* ObjectDFA::shit(){
-        map<string, Value*> *m = new map<string, Value*>();
-        m->insert(poo.begin(), poo.end());
+inline Value* ObjectDFA::shit(){
+        Value* ret = new Value(poo);
         wipe_ass();
-        return new Value(m);
+        return ret;
 }
 
-void ObjectDFA::wipe_ass(){
-        poo.clear();
+inline void ObjectDFA::wipe_ass(){
+        poo = NULL;
 }
 
 

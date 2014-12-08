@@ -28,7 +28,7 @@ template<typename T> class stream {
 
 template<typename T> class DFA {
         public:
-                virtual Value* eat(stream<T>& foods) = 0;
+                virtual Value* eat(stream<T>& foods, T& appetizer) = 0;
 
                 bool in_range(const T& a, const T& min, const T& max) {
                         return (a >= min && a < max);

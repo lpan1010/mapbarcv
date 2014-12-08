@@ -17,17 +17,15 @@ public:
                 is_float = false;
         }
 
-        Value* eat(stream<char>& foods) {
-                //TODO We need to implement the real type dfa.
-                char food;
-                foods.next(food);
-
-                if (food != '-' && food != '+' && !in_range(food, '0', '9' + 1)) {
-                        foods.back(food);
+        Value* eat(stream<char>& foods, char& appetizer) {
+                if (appetizer != '-' && appetizer != '+' && !in_range(appetizer, '0', '9' + 1)) {
+                        foods.back(appetizer);
                         return NULL;
                 } else {
-                        poo.push_back(food);
+                        poo.push_back(appetizer);
                 }
+                
+                char food;
                 while (foods.next(food)) {
                         if (food == '.' || food == 'e' || food == 'E'){
                                 is_float = true;

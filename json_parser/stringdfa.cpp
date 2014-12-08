@@ -7,7 +7,8 @@
 
 #include "stringdfa.hpp"
 
-StringDFA::StringDFA() {
+map<char, char> StringDFA::init_map(){
+        map<char,char> control_chars;
         control_chars['\"'] = '\"';
         control_chars['\\'] = '\\';
         control_chars['/'] = '/';
@@ -18,22 +19,24 @@ StringDFA::StringDFA() {
         control_chars['t'] = '\t';
         // TODO hex number is not supported yet.
         //control_chars['u'] = '\f';
+        return control_chars;
 }
 
-Value* StringDFA::eat(stream<char>& foods) {
-        char food;
+map<char, char> StringDFA::control_chars(StringDFA::init_map());
+
+StringDFA::StringDFA() {
+}
+
+Value* StringDFA::eat(stream<char>& foods, char& appetizer) {
         bool in_control_char = false;
 
-        foods.next(food);
-        
-        // TODO Just in case....
-        if (food != '\"') {
-                foods.back(food);
-                //cout << "Array world" << endl;
+        if (appetizer != '\"') {
+                foods.back(appetizer);
                 return NULL;
         }
 
         foods.dont_jump_empty();
+        char food;
         while (foods.next(food)) {
                 if (!in_control_char && food == '\\') {
                         in_control_char = true;

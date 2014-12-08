@@ -8,18 +8,13 @@
 #include "nildfa.hpp"
 #include "algorithm"
 
-Value* NilDFA::eat(stream<char>& foods){
+Value* NilDFA::eat(stream<char>& foods, char& appetizer){
+        if (appetizer != 'n' && appetizer != 'N'){
+                return NULL;
+        }
+
         char food;
         string poo;
-
-        if (!foods.next(food)){
-                return NULL;
-        }
-
-        if (food != 'n' && food != 'N'){
-                return NULL;
-        }
-
         for (int var = 0; var < 3; ++var) {
                 if (!foods.next(food)){
                      return NULL;

@@ -122,18 +122,21 @@ int main(int argc, char **argv) {
         cout << "Hello world" << endl;
         ArrayDFA adfa;
         ObjectDFA odfa;
-        string s = "{}";
+        string s = "}";
         strstream sss(s);
-        Value* v = odfa.eat(sss);
+        char appetizer = '{';
+        Value* v = odfa.eat(sss, appetizer);
         //cout << v << endl;
         //cout << *v << endl;
-        
+        cout << "Reading file" << endl;
         ObjectDFA od;
         ifstream ifs;
         ifs.open("/Users/qin/Downloads/MOCK_DATA(1).json");
         filestream ssa(ifs);
+
+        if (!ssa.next(appetizer)){}
         //strstream ssa(s);
-        Value* a = adfa.eat(ssa);
+        Value* a = adfa.eat(ssa, appetizer);
         //cout << *a << endl;
         cout << a->a->size() << endl;
         cout << "DONE" << endl;

@@ -17,11 +17,12 @@ class ObjectDFA: public DFA<char> {
 public:
         ObjectDFA();
         ~ObjectDFA();
-        Value* eat(stream<char>& foods);
+        Value* eat(stream<char>& foods, char& appetizer);
 protected:
         Value* shit();
         void wipe_ass();
-        map<string, Value*> poo;
+        void clear();
+        map<string, Value*>* poo;
 private:
         
 };

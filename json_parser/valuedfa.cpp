@@ -26,30 +26,21 @@ ValueDFA::~ValueDFA(){
         delete ndfa;
 }
 
-Value* ValueDFA::eat(stream<char>& foods) {
-        char food;
-        foods.next(food);
-
-        if (food == '\"') {
-                foods.back(food);
-                return sdfa->eat(foods);
-        } else if (in_range(food, '0', '9' + 1) || food == '-') {
-                foods.back(food);
-                return idfa->eat(foods);
-        } else if (food == '{') {
-                foods.back(food);
-                return odfa->eat(foods);
-        } else if (food == '[') {
-                foods.back(food);
-                return adfa->eat(foods);
-        } else if (food == 'f' || food == 't' || food == 'T' || food == 'F') {
-                foods.back(food);
-                return bdfa->eat(foods);
-        } else if (food == 'n' || food == 'N') {
-                foods.back(food);
-                return ndfa->eat(foods);
+Value* ValueDFA::eat(stream<char>& foods, char& appetizer) {
+        if (appetizer == '\"') {
+                return sdfa->eat(foods, appetizer);
+        } else if (in_range(appetizer, '0', '9' + 1) || appetizer == '-') {
+                return idfa->eat(foods, appetizer);
+        } else if (appetizer == '{') {
+                return odfa->eat(foods, appetizer);
+        } else if (appetizer == '[') {
+                return adfa->eat(foods, appetizer);
+        } else if (appetizer == 'f' || appetizer == 't' || appetizer == 'T' || appetizer == 'F') {
+                return bdfa->eat(foods, appetizer);
+        } else if (appetizer == 'n' || appetizer == 'N') {
+                return ndfa->eat(foods, appetizer);
         } else {
-                cout << "Value:: can't handle "<< food << endl;
+                cout << "Value:: can't handle "<< appetizer << endl;
         }
         return NULL;
 }

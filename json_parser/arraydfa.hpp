@@ -13,7 +13,7 @@
 
 class ArrayDFA: public DFA<char> {
         public:
-                 Value* eat(stream<char>& foods);
+                 Value* eat(stream<char>& foods, char& appetizer);
                  Value* shit();
                  void wipe_ass();
         private:

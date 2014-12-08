@@ -7,26 +7,24 @@
 
 #include "arraydfa.hpp"
 
-Value* ArrayDFA::eat(stream<char>& foods) {
-        // 潜在的内存泄漏问题
-        poo = new vector<Value*>();
-
-        ValueDFA vdfa;
-        char food;
-        foods.next(food);
-        if (food != '[') {
-                foods.back(food);
+Value* ArrayDFA::eat(stream<char>& foods, char& appetizer) {
+        if (appetizer != '[') {
+                foods.back(appetizer);
                 return NULL;
         }
+        
+        // 潜在的内存泄漏问题
+        poo = new vector<Value*>();
+        ValueDFA vdfa;
+        
+        char food;
         while (foods.next(food)) {
                 if (food == ',') {
                         continue;
                 } else if (food == ']') {
                         return shit();
-                } else {
-                        foods.back(food);
                 }
-                Value* v = vdfa.eat(foods);
+                Value* v = vdfa.eat(foods, food);
                 if (v == NULL) {
                         return NULL;
                 } else {

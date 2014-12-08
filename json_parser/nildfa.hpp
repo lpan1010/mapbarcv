@@ -11,7 +11,7 @@
 #include "dfa.hpp"
 class NilDFA :public DFA<char>{
         public:
-                Value* eat(stream<char>& foods);
+                Value* eat(stream<char>& foods, char& appetizer);
         private:
                 Value* shit(){return NULL;};
                 void wipe_ass(){};

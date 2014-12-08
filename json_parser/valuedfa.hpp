@@ -25,7 +25,7 @@ class ValueDFA: public DFA<char> {
 public:
         ValueDFA();
         ~ValueDFA();
-        Value* eat(stream<char>& foods);
+        Value* eat(stream<char>& foods, char& appetizer);
         Value* shit();
         void wipe_ass();
 private:

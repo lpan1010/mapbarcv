@@ -9,15 +9,13 @@
 #include <algorithm>
 #include <string>
 
-Value* BoolDFA::eat(stream<char>& foods){
-        char food;
-        foods.next(food);
-        if (food == 't' || food == 'T'){
+Value* BoolDFA::eat(stream<char>& foods, char& appetizer){
+        if (appetizer == 't' || appetizer == 'T'){
                 t_or_f = true;
                 if (n_bites(foods, 3)){
                         return shit();
                 }
-        }else if (food == 'f' || food == 'F'){
+        }else if (appetizer == 'f' || appetizer == 'F'){
                 t_or_f = false;
                 if (n_bites(foods, 4)){
                         return shit();
