@@ -19,7 +19,7 @@
 #include "value.hpp"
 #include "valuedfa.hpp"
 #include "stringdfa.hpp"
-#include "intdfa.hpp"
+#include "number_dfa.hpp"
 
 using namespace std;
 
@@ -46,12 +46,11 @@ class strstream: public stream<char> {
                                         return false;
                                 }
                                 n = s[0];
-                                //cout << n << endl;
                                 s.erase(0, 1);
                                 if (j_empty && is_empty_char(n)){
                                         continue;
                                 }
-                                cout << n ;
+                                //cout << n;
                                 return true;
                         }
                 }

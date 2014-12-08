@@ -28,7 +28,7 @@ int _frame_num;
 /** @主函数 */
 int main(int argc, const char** argv) {
         Mat gray, edge;
-
+        assert(argc == 2);
         //-- 1. 加载级联分类器文件
         if (!car_cascade.load(cascade_name)) {
                 printf("--(!)Error loading\n");
@@ -85,7 +85,7 @@ void detectAndDisplay(Mat frame) {
                 resize_rect(_frame, frame, cars[i]);
                 rectangle(_frame, cars[i], Scalar(0, 255, 0), 3);
         }
-        echo_rect(_frame_num, cars);
+        //echo_rect(_frame_num, cars);
         //-- 显示结果图像
         //resize(frame, frame, Size(frame.cols*2, frame.rows*2));
         imshow(window_name, _frame);

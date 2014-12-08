@@ -7,7 +7,7 @@
 
 #include "valuedfa.hpp"
 
-class IntDFA;
+class NumberDFA;
 class ArrayDFA;
 class StringDFA;
 
@@ -20,7 +20,7 @@ Value* ValueDFA::eat(stream<char>& foods) {
                 return sdfa.eat(foods);
         } else if (in_range(food, '0', '9' + 1) || food == '-') {
                 foods.back(food);
-                IntDFA idfa;
+                NumberDFA idfa;
                 return idfa.eat(foods);
         } else if (food == '{') {
                 foods.back(food);

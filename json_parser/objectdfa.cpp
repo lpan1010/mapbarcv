@@ -47,7 +47,7 @@ Value* ObjectDFA::eat(stream<char>& foods){
                 if (value == NULL) {
                         return NULL;
                 } else {
-                        cout << key << " : " << *value << endl;
+                        //cout << key << " : " << *value << endl;
                         poo[key] = value;
                 }
         }

@@ -14,7 +14,7 @@
 
 #include "dfa.hpp"
 #include "stringdfa.hpp"
-#include "intdfa.hpp"
+#include "number_dfa.hpp"
 #include "arraydfa.hpp"
 #include "booldfa.hpp"
 #include "nildfa.hpp"

@@ -1,7 +1,11 @@
 DONE ArrayDFA
 DONE ValueDFA
 DONE nil的问题处理
-TODO String空格问题
-TODO 性能
+DONE String空格问题
+DONE Real Number
+
+TODO Code Review
+TODO 内存泄漏
+TODO 性能:主要减少back的次数
 TODO 错误处理
-TODO Real Number
+
