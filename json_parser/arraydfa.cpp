@@ -13,7 +13,6 @@ Value* ArrayDFA::eat(stream<char>& foods) {
 
         ValueDFA vdfa;
         char food;
-
         foods.next(food);
         if (food != '[') {
                 foods.back(food);

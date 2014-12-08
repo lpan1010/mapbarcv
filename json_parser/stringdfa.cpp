@@ -25,10 +25,11 @@ Value* StringDFA::eat(stream<char>& foods) {
         bool in_control_char = false;
 
         foods.next(food);
-
+        
         // TODO Just in case....
         if (food != '\"') {
                 foods.back(food);
+                //cout << "Array world" << endl;
                 return NULL;
         }
 

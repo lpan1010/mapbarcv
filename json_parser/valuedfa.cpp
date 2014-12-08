@@ -7,37 +7,47 @@
 
 #include "valuedfa.hpp"
 
-class NumberDFA;
-class ArrayDFA;
-class StringDFA;
+#include "stringdfa.hpp"
+#include "number_dfa.hpp"
+#include "arraydfa.hpp"
+#include "booldfa.hpp"
+#include "nildfa.hpp"
+#include "objectdfa.hpp"
+
+ValueDFA::ValueDFA():idfa(new NumberDFA()), sdfa(new StringDFA()), odfa(new ObjectDFA()), adfa(new ArrayDFA()), bdfa(new BoolDFA()), ndfa(new NilDFA()){
+}
+
+ValueDFA::~ValueDFA(){
+        delete idfa;
+        delete sdfa;
+        delete odfa;
+        delete adfa;
+        delete bdfa;
+        delete ndfa;
+}
 
 Value* ValueDFA::eat(stream<char>& foods) {
         char food;
         foods.next(food);
+
         if (food == '\"') {
                 foods.back(food);
-                StringDFA sdfa;
-                return sdfa.eat(foods);
+                return sdfa->eat(foods);
         } else if (in_range(food, '0', '9' + 1) || food == '-') {
                 foods.back(food);
-                NumberDFA idfa;
-                return idfa.eat(foods);
+                return idfa->eat(foods);
         } else if (food == '{') {
                 foods.back(food);
-                ObjectDFA odfa;
-                return odfa.eat(foods);
+                return odfa->eat(foods);
         } else if (food == '[') {
                 foods.back(food);
-                ArrayDFA adfa;
-                return adfa.eat(foods);
+                return adfa->eat(foods);
         } else if (food == 'f' || food == 't' || food == 'T' || food == 'F') {
                 foods.back(food);
-                BoolDFA bdfa;
-                return bdfa.eat(foods);
+                return bdfa->eat(foods);
         } else if (food == 'n' || food == 'N') {
                 foods.back(food);
-                NilDFA ndfa;
-                return ndfa.eat(foods);
+                return ndfa->eat(foods);
         } else {
                 cout << "Value:: can't handle "<< food << endl;
         }

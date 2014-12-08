@@ -7,7 +7,14 @@
 
 #include "objectdfa.hpp"
 
+ObjectDFA::ObjectDFA(){
+}
+
+ObjectDFA::~ObjectDFA(){
+}
+
 Value* ObjectDFA::eat(stream<char>& foods){
+        
         StringDFA sdfa;
         ValueDFA vdfa;
         char food;

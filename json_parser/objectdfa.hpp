@@ -12,13 +12,18 @@
 #include "stringdfa.hpp"
 #include "valuedfa.hpp"
 
-class ObjectDFA {
-        public:
-                Value* eat(stream<char>& foods);
-        protected:
-                Value* shit();
-                void wipe_ass();
-                map<string, Value*> poo;
+
+class ObjectDFA: public DFA<char> {
+public:
+        ObjectDFA();
+        ~ObjectDFA();
+        Value* eat(stream<char>& foods);
+protected:
+        Value* shit();
+        void wipe_ass();
+        map<string, Value*> poo;
+private:
+        
 };
 
 #endif /* OBJECTDFA_H_ */
