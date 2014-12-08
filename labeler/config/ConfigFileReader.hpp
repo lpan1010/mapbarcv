@@ -1,7 +1,7 @@
 /*
  * ConfigFileReader.h
  *
- *  Created on: 2014年11月27日
+ *  Created on: 2014,11,27
  *      Author: qin
  */
 
@@ -12,8 +12,9 @@
 
 class ConfigFileReader {
         public:
-                static void read(const string& file, vector<string>& video_files);
-                static bool read(const string& file, string& video, int& frame_num);
+                static void read(string& file, vector<string>& video_files);
+                static bool read(string& file, string& video, int& frame_num);
+                static bool read_pics_progress(const string& file, string& dir, string& pic);
 };
 
 

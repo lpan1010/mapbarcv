@@ -1,7 +1,7 @@
 /*
  * frame_labeler.cpp
  *
- *  Created on: 2014年11月27日
+ *  Created on: 2014,11,27
  *      Author: qin
  */
 
@@ -10,16 +10,16 @@
 void FrameLabeler::init() {
         labels = new vector<Label*>();
         current_label = new Label();
-
 }
 
-bool FrameLabeler::label_frame(const Mat& frame, const String& video_file_name,
-                const int& frame_num) {
-        this->frame = &frame;
+bool FrameLabeler::label_frame(const Mat& fr, const String& video_file_name,
+                const string& frame_num) {
+        frame = &fr;
 
         clear_labels();
 
-        return label_loop(frame, video_file_name, frame_num);
+        cout << "Label loop begin." << endl;
+        return label_loop(*frame, video_file_name, frame_num);
 }
 
 KeyAction FrameLabeler::get_key_seq() {
@@ -65,7 +65,11 @@ void FrameLabeler::clear_labels() {
         current_label = new Label();
 }
 
-void FrameLabeler::quit_prog(const QString& file_name, const int& frame_num) {
+void FrameLabeler::quit_prog(const string& file_name, const string& frame_num) {
+        ofstream progress;
+        progress.open(PROGRESS_FILE.c_str(), std::ios::out);
+        progress << file_name << endl << frame_num << endl;
+        progress.close();
         /*(*meta_file_stream).close();
          ofstream last_file;
          last_file.open(last_pos_file.c_str(), std::ios::out);
@@ -73,12 +77,14 @@ void FrameLabeler::quit_prog(const QString& file_name, const int& frame_num) {
          last_file.close();
          exit(0);*/
 }
-QString FrameLabeler::labels_to_string(const vector<Label*> &labels) {
+string FrameLabeler::labels_to_string(const vector<Label*> &labels) {
         StringStream ss;
         for (size_t i = 0; i < labels.size(); i++) {
                 Label *l = labels[i];
                 ss << " ";
                 ss << l->to_string();
+
+
                 /*Rect rect;
                 rect.x = l->left_top_point.x;
                 rect.y = l->left_top_point.y;
@@ -91,13 +97,13 @@ QString FrameLabeler::labels_to_string(const vector<Label*> &labels) {
         return ss.str();
 }
 
-void FrameLabeler::save_label(const String& video_file_name,
-                const int& frame_num, const vector<Label*> &labels) {
+void FrameLabeler::save_label(const string& video_file_name,
+                const string& frame_num, const vector<Label*> &labels) {
         if (labels.size() == 0) {
                 return;
         }
         StringStream ss;
-        ss << video_file_name << ':' << frame_num << labels_to_string(labels);
+        ss << video_file_name << '@' << frame_num << labels_to_string(labels);
         (*meta_file_stream) << ss.str() << std::endl;
 
 }
@@ -114,7 +120,12 @@ void FrameLabeler::cancel_label() {
 }
 
 void FrameLabeler::refresh() {
+        if (frame == NULL){
+                cout << "Frame is NULL "<<endl;
+                return;
+        }
         Mat output = frame->clone();
+        
         current_label->print_on(output);
         
         for (size_t i = 0; i < labels->size(); ++i) {
@@ -129,9 +140,10 @@ void FrameLabeler::refresh() {
 
 // TODO
 bool FrameLabeler::label_loop(const Mat& frame, const String& video_file_name,
-                const int& frame_num) {
+                const string& frame_num) {
         while (true) {
                 KeyAction action = get_key_seq();
+                cout << "KeyAction:" << action << endl;
                 switch (action) {
                         case SaveAndNext:
                                 save_label(video_file_name, frame_num,
@@ -143,7 +155,7 @@ bool FrameLabeler::label_loop(const Mat& frame, const String& video_file_name,
                                 cancel_label();
                                 break;
                         case Exit:
-                                //quit_prog (video_file_name, frame_num);
+                                quit_prog (video_file_name, frame_num);
                                 return false;
                                 break;
                         case DeleteAllLabels:
