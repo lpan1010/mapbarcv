@@ -16,7 +16,7 @@
 using namespace std;
 
 enum ValueType {
-        INT, REAL, STRING, ARRAY, OBJECT, NIL
+        INT, REAL, STRING, ARRAY, OBJECT, NIL, BOOL
 };
 
 class Value {
@@ -37,6 +37,7 @@ class Value {
                 ValueType type;
                 int i;
                 double f;
+                bool b;
                 string* s;
                 vector<Value*>* a;
                 map<string, Value>* obj;
@@ -47,6 +48,7 @@ class Value {
                 void dump_real(std::ostream& os);
                 void dump_int(std::ostream& os);
                 void dump_nil(std::ostream& os);
+                void dump_bool(std::ostream& os);
                 void init();
 };
 

@@ -81,15 +81,15 @@ void Value::dump_object(std::ostream& os) {
 
 void Value::dump_array(std::ostream& os) {
         os << '[';
-        for (size_t var = 0; var < a->size() - 1; ++var) {
+        for (size_t var = 0; var < a->size() -1; ++var) {
                 os << *((*a)[var]);
                 os << ',';
         }
-        cout << a->back() << ']';
+        cout << *(a->back()) << ']';
 }
 
 void Value::dump_string(std::ostream& os) {
-        os << *s;
+        os << "\"" << *s << "\"";
 }
 
 void Value::dump_real(std::ostream& os) {
@@ -103,6 +103,10 @@ void Value::dump_int(std::ostream& os) {
 void Value::dump_nil(std::ostream& os) {
         os << "nil";
 }
+void Value::dump_bool(std::ostream& os){
+        os << b;
+}
+
 
 std::ostream& operator<<(std::ostream& os, Value& v) {
         switch (v.type) {
@@ -124,9 +128,9 @@ std::ostream& operator<<(std::ostream& os, Value& v) {
                 case NIL:
                         v.dump_nil(os);
                         break;
-        }
-        if (v.type == STRING) {
-                os << "\"" << *v.s << "\"";
+                case BOOL:
+                        v.dump_bool(os);
+                        break;
         }
         return os;
 }
