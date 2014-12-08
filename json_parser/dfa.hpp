@@ -15,7 +15,14 @@ template<typename T> class stream {
         public:
                 virtual bool next(T&) = 0;
                 virtual void back(T&) = 0;
-                //virtual ~stream() = 0;
+                void dont_jump_empty(){
+                        j_empty = false;
+                }
+                void jump_empty(){
+                        j_empty = true;
+                }
+        protected:
+                bool j_empty;
 };
 
 

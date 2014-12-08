@@ -27,11 +27,13 @@ class Value {
                 Value(int);
                 Value(double);
                 Value(string*);
-                Value(map<string, Value>* m);
+                Value(map<string, Value*>* m);
                 Value(vector<Value* >* v);
+                Value(bool vb);
                 const Value& operator[](std::size_t idx);
                 const Value& operator[](std::string key);
                 friend std::ostream& operator<<(std::ostream&, Value&);
+                void clear();
         public:
                 // 变量
                 ValueType type;
@@ -40,7 +42,7 @@ class Value {
                 bool b;
                 string* s;
                 vector<Value*>* a;
-                map<string, Value>* obj;
+                map<string, Value*>* obj;
 
                 void dump_object(std::ostream& os);
                 void dump_array(std::ostream& os);

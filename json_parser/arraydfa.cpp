@@ -5,7 +5,7 @@
  *      Author: qin
  */
 
-#include "arraydfa.h"
+#include "arraydfa.hpp"
 
 Value* ArrayDFA::eat(stream<char>& foods) {
         poo = new vector<Value*>();

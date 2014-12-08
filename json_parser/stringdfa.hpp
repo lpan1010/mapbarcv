@@ -8,7 +8,7 @@
 #ifndef STRINGDFA_H_
 #define STRINGDFA_H_
 
-#include "dfa.h"
+#include "dfa.hpp"
 
 class StringDFA: public DFA<char> {
         public:

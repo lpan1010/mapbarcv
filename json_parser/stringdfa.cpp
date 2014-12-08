@@ -5,6 +5,6 @@
  *      Author: qin
  */
 
-#include "stringdfa.h"
+#include "stringdfa.hpp"
 
 

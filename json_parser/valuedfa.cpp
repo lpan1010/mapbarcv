@@ -5,7 +5,7 @@
  *      Author: qin
  */
 
-#include "valuedfa.h"
+#include "valuedfa.hpp"
 
 class IntDFA;
 class ArrayDFA;
@@ -24,19 +24,22 @@ Value* ValueDFA::eat(stream<char>& foods) {
                 return idfa.eat(foods);
         } else if (food == '{') {
                 foods.back(food);
-                // TODO Object
+                ObjectDFA odfa;
+                return odfa.eat(foods);
         } else if (food == '[') {
                 foods.back(food);
                 ArrayDFA adfa;
                 return adfa.eat(foods);
-        } else if (food == 'f' || food == 't') {
+        } else if (food == 'f' || food == 't' || food == 'T' || food == 'F') {
                 foods.back(food);
-                // TODO bool
-        } else if (food == 'n') {
+                BoolDFA bdfa;
+                return bdfa.eat(foods);
+        } else if (food == 'n' || food == 'N') {
                 foods.back(food);
-                // TODO null
+                NilDFA ndfa;
+                return ndfa.eat(foods);
         } else {
-                // Error
+                cout << "Value:: can't handle "<< food << endl;
         }
         return NULL;
 }

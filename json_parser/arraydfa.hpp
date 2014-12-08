@@ -8,8 +8,8 @@
 #ifndef ARRAYDFA_H_
 #define ARRAYDFA_H_
 
-#include "dfa.h"
-#include "valuedfa.h"
+#include "dfa.hpp"
+#include "valuedfa.hpp"
 
 class ArrayDFA: public DFA<char> {
         public:

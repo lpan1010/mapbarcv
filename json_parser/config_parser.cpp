@@ -12,12 +12,14 @@
 #include <vector>
 #include <map>
 #include <stdlib.h>
+#include <iostream>
+#include <fstream>
 
-#include "dfa.h"
+#include "dfa.hpp"
 #include "value.hpp"
-#include "valuedfa.h"
-#include "stringdfa.h"
-#include "intdfa.h"
+#include "valuedfa.hpp"
+#include "stringdfa.hpp"
+#include "intdfa.hpp"
 
 using namespace std;
 
@@ -35,15 +37,23 @@ class strstream: public stream<char> {
                 strstream(string in) {
                         s = in;
                         cur = in.size();
+                        j_empty = true;
                 }
 
                 bool next(char& n) {
-                        if (s.empty()) {
-                                return false;
+                        while (true) {
+                                if (s.empty()) {
+                                        return false;
+                                }
+                                n = s[0];
+                                //cout << n << endl;
+                                s.erase(0, 1);
+                                if (j_empty && is_empty_char(n)){
+                                        continue;
+                                }
+                                cout << n ;
+                                return true;
                         }
-                        n = s[0];
-                        s.erase(0, 1);
-                        return true;
                 }
 
                 void back(char& b) {
@@ -51,50 +61,29 @@ class strstream: public stream<char> {
                 }
 
         private:
+                bool is_empty_char(char& c) {
+                        if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+                                return true;
+                        } else {
+                                return false;
+                        }
+                }
+
                 size_t cur;
                 string s;
 };
 
-class ObjectDFA: public DFA<char> {
-
-};
-
-
 int main(int argc, char **argv) {
-        strstream ssi("199999");
-        IntDFA id;
-        StringDFA sd;
-        ArrayDFA ad;
-//        Value* v;
-//        v = id.eat(ssi);
-//        if (v != NULL){
-//                cout << *v << endl;
-//        }
-//        delete v;
-//
-//        strstream sss("\"abckdf\nkk\"");
-//        v = sd.eat(sss);
-//        if (v != NULL){
-//                //cout << *(v->s)<<endl;
-//                cout << *v << endl;
-//        }
-//
-//        Value i(123);
-//        string si = "asdf";
-//        Value s(&si);
-//        vector<Value*> vec;
-//        vec.push_back(&s);
-//        vec.push_back(&i);
-//
-//        string st = "fofo";
-//        s.s = &st;
-//        i.i = 321;
-//        cout << *vec[0] << endl;
-//        cout << *vec[1] << endl;
-        cout << "Array:" << endl;
-        strstream ssa("[\"123\",123]");
-
-        Value* a =ad.eat(ssa);
+        ObjectDFA od;
+        string s;
+        ifstream ifs;
+        ifs.open("/tmp/json.json");
+        string line;
+        while(std::getline(ifs, line)){
+                s += line;
+        }
+        strstream ssa(s);
+        Value* a = od.eat(ssa);
         cout << *a << endl;
         cout << "DONE" << endl;
 }

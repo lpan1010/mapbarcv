@@ -8,7 +8,7 @@
 #ifndef INTDFA_H_
 #define INTDFA_H_
 
-#include "dfa.h"
+#include "dfa.hpp"
 #include "stdlib.h"
 
 class IntDFA: public DFA<char> {

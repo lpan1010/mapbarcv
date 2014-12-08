@@ -20,6 +20,10 @@ Value::Value(int vi) :
         f = 0.0;
 }
 
+Value::Value(bool vb) :
+                type(BOOL), b(vb), s(NULL), a(NULL), obj(
+                NULL){
+}
 Value::Value(double vf) :
                 type(REAL), f(vf), s(NULL), a(NULL), obj(
                 NULL) {
@@ -32,7 +36,7 @@ Value::Value(string* vs) :
         init();
 }
 
-Value::Value(map<string, Value>* m) :
+Value::Value(map<string, Value*>* m) :
                 type(OBJECT), s(NULL), a(
                 NULL), obj(m) {
         init();
@@ -68,13 +72,13 @@ void Value::init() {
 
 // Dump函数
 void Value::dump_object(std::ostream& os) {
-        std::map<std::string, Value>::iterator iter = obj->begin();
+        std::map<std::string, Value*>::iterator iter = obj->begin();
 
-        os << '{' << "\"" << iter->first << "\"" << ':' << iter->second;
+        os << '{' << "\"" << iter->first << "\"" << " : " << *(iter->second);
         iter++;
         for (; iter != obj->end(); iter++) {
-                os << ',';
-                os << "\"" << iter->first << "\"" << ':' << iter->second;
+                os << ", ";
+                os << "\"" << iter->first << "\"" << " : " << *(iter->second);
         }
         os << '}';
 }
@@ -83,7 +87,7 @@ void Value::dump_array(std::ostream& os) {
         os << '[';
         for (size_t var = 0; var < a->size() -1; ++var) {
                 os << *((*a)[var]);
-                os << ',';
+                os << ", ";
         }
         cout << *(a->back()) << ']';
 }
@@ -101,12 +105,38 @@ void Value::dump_int(std::ostream& os) {
 }
 
 void Value::dump_nil(std::ostream& os) {
-        os << "nil";
+        os << "null";
 }
 void Value::dump_bool(std::ostream& os){
-        os << b;
+        if (b){
+                os << "true";
+        }else{
+                os << "false";
+        }
+
 }
 
+void Value::clear(){
+        switch (type) {
+                case OBJECT:
+                        // TODO
+                        break;
+                case ARRAY:
+                        for (size_t i; i < a->size(); ++i){
+                                (*a)[i]->clear();
+                        }
+                        break;
+                case STRING:
+                        delete s;
+                        break;
+                case REAL:
+                case INT:
+                case NIL:
+                case BOOL:
+                        break;
+        }
+        delete this;
+}
 
 std::ostream& operator<<(std::ostream& os, Value& v) {
         switch (v.type) {

@@ -12,10 +12,13 @@
 #include <map>
 #include <stdlib.h>
 
-#include "dfa.h"
-#include "stringdfa.h"
-#include "intdfa.h"
-#include "arraydfa.h"
+#include "dfa.hpp"
+#include "stringdfa.hpp"
+#include "intdfa.hpp"
+#include "arraydfa.hpp"
+#include "booldfa.hpp"
+#include "nildfa.hpp"
+#include "objectdfa.hpp"
 
 class ValueDFA: public DFA<char> {
         public:
