@@ -73,6 +73,13 @@ class strstream: public stream<char> {
 };
 
 int main(int argc, char **argv) {
+        ArrayDFA adfa;
+        ObjectDFA odfa;
+        strstream sss("{}");
+        Value* v = odfa.eat(sss);
+        //cout << v << endl;
+        cout << *v << endl;
+        
         ObjectDFA od;
         string s;
         ifstream ifs;

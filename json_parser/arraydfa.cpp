@@ -8,6 +8,7 @@
 #include "arraydfa.hpp"
 
 Value* ArrayDFA::eat(stream<char>& foods) {
+        // 潜在的内存泄漏问题
         poo = new vector<Value*>();
 
         ValueDFA vdfa;

@@ -58,7 +58,7 @@ const Value& Value::operator[](std::size_t idx) {
 
 const Value& Value::operator[](std::string key) {
         if (type == OBJECT) {
-                return (*obj)[key];
+                return *((*obj)[key]);
         } else {
                 return Value::nil;
         }
@@ -72,8 +72,9 @@ void Value::init() {
 
 // Dump函数
 void Value::dump_object(std::ostream& os) {
+        if (obj->size()==0) {os << "{}"; return;}
+        
         std::map<std::string, Value*>::iterator iter = obj->begin();
-
         os << '{' << "\"" << iter->first << "\"" << " : " << *(iter->second);
         iter++;
         for (; iter != obj->end(); iter++) {
@@ -84,6 +85,10 @@ void Value::dump_object(std::ostream& os) {
 }
 
 void Value::dump_array(std::ostream& os) {
+        if (a->size() == 0){
+                os << "[]";
+                return;
+        }
         os << '[';
         for (size_t var = 0; var < a->size() -1; ++var) {
                 os << *((*a)[var]);

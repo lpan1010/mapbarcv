@@ -18,7 +18,6 @@ Value* ObjectDFA::eat(stream<char>& foods){
                 foods.back(food);
                 return NULL;
         }
-
         wipe_ass();
         while (foods.next(food)) {
                 if (food == ',') {
