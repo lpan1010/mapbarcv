@@ -141,6 +141,7 @@ void FrameLabeler::refresh() {
 // TODO
 bool FrameLabeler::label_loop(const Mat& frame, const String& video_file_name,
                 const string& frame_num) {
+        refresh();
         while (true) {
                 KeyAction action = get_key_seq();
                 cout << "KeyAction:" << action << endl;
@@ -149,7 +150,7 @@ bool FrameLabeler::label_loop(const Mat& frame, const String& video_file_name,
                                 save_label(video_file_name, frame_num,
                                                 (*labels));
                                 clear_labels();
-                                //refresh();
+                                quit_prog (video_file_name, frame_num);
                                 return true;
                         case CancelCurrentLabel:
                                 cancel_label();
