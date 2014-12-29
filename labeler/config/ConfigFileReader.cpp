@@ -29,7 +29,7 @@ void ConfigFileReader::read(string& file, vector<string>& video_files) {
                 video_files.push_back(line);
         }
         // sort
-        std::sort(video_files.begin(), video_files.end());
+        //std::sort(video_files.begin(), video_files.end());
         cout << "out config file reader::read" << endl;
 }
 
