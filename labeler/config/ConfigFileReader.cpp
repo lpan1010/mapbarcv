@@ -1,7 +1,7 @@
 /*
  * ConfigFileReader.cpp
  *
- *  Created on: 2014年11月27日
+ *  Created on: 2014,11,27
  *      Author: qin
  */
 
@@ -18,19 +18,41 @@ void split(const std::string &s,
         }
 }
 
-void ConfigFileReader::read(const string& file, vector<string>& video_files) {
+void ConfigFileReader::read(string& file, vector<string>& video_files) {
         ifstream config_file;
         config_file.open(file.c_str(), std::ios::in);
         string line;
+
+        cout << "in config file reader::read" << endl;
         video_files.clear();
         while (getline(config_file, line)) {
                 video_files.push_back(line);
         }
         // sort
-        std::sort(video_files.begin(), video_files.end());
+        //std::sort(video_files.begin(), video_files.end());
+        cout << "out config file reader::read" << endl;
 }
 
-bool ConfigFileReader::read(const string& file, string& video, int& frame_num) {
+bool ConfigFileReader::read_pics_progress(const string& file, string& dir, string& pic){
+        ifstream config_file;
+        config_file.open(file.c_str(), std::ios::in);
+
+        if (!getline(config_file, dir)){
+                return false;
+        }else if (dir.empty()) {
+                return false;
+        }
+
+        if (!getline(config_file, pic)){
+                return false;
+        }else if (pic.empty()) {
+                return false;
+        }
+        cout << "Last progress ---->" << dir << ":" << pic << endl;
+}
+
+
+bool ConfigFileReader::read(string& file, string& video, int& frame_num) {
         ifstream config_file;
         vector<string> segs;
         config_file.open(file.c_str(), std::ios::in);

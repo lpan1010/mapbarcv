@@ -1,43 +1,13 @@
 /*
  * video_labeler.cpp
  *
- *  Created on: 2014年11月27日
+ *  Created on: 2014,11,27
  *      Author: qin
  */
 
 #include "video_labeler.hpp"
 
-void lbuttonup_action(int x, int y) {
-        PinStatus ret = current_label->pin(x, y);
-        switch (ret) {
-                case Second:
-                        labels->push_back(current_label);
-                        current_label = new Label();
-                        break;
-                case First:
-                        break;
-                case Locked:
-                        // TODO error ?
-                        break;
-        }
-}
 
-void tracking_ruler(int x, int y) {
-        mouse_y = y;
-        mouse_x = x;
-}
-
-void label_mouse_callback(int event, int x, int y, int, void*) {
-        switch (event) {
-                case EVENT_LBUTTONUP:
-                        lbuttonup_action(x, y);
-                        break;
-                case EVENT_MOUSEMOVE:
-                        tracking_ruler(x, y);
-                        break;
-        }
-        vl.refresh();
-}
 
 
 void VideoLabeler::refresh() {
@@ -53,7 +23,7 @@ bool VideoLabeler::load_video(String& video_file_path) {
 
 VideoLabeler::VideoLabeler() {
         namedWindow("Label");
-        setMouseCallback("Label", label_mouse_callback);
+        //setMouseCallback("Label", label_mouse_callback);
 }
 
 void VideoLabeler::open_meta_file(String& meta_file_path) {
@@ -67,9 +37,16 @@ void VideoLabeler::save_current_progress(String& video_name, int& frame){
         progress.close();
 }
 
+
+string int2str(int& i){
+        stringstream ss;
+        ss << i;
+        return ss.str();
+}
+
 bool VideoLabeler::label_video(String& video_file_path,
                 int& frame_num_start_from,
-                String& meta_file) {
+                string& meta_file) {
         if (!load_video(video_file_path)){
                 return false;
         }
@@ -85,7 +62,7 @@ bool VideoLabeler::label_video(String& video_file_path,
 		        break;
 		}
                 
-		if (!fl.label_frame(frame, video_file_path, frame_num)){
+		if (!fl.label_frame(frame, video_file_path, int2str(frame_num))){
 		        save_current_progress(video_file_path, frame_num);
 		        return false;
 		}
@@ -98,7 +75,7 @@ bool VideoLabeler::label_video(String& video_file_path,
 }
 
 void VideoLabeler::jump_to_frame(int& frame_num) {
-        int frame_count= video.get(CV_CAP_PROP_FRAME_COUNT);
+        int frame_count= (int)video.get(CV_CAP_PROP_FRAME_COUNT);
         if (frame_count <= frame_num){
                 frame_num = frame_count - 1;
         }

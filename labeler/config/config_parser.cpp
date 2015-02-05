@@ -3,6 +3,10 @@
  *
  *  Created on: 2014年11月25日
  *      Author: qin
+ *
+ *      TODO 现在的问题是如何解决Array DFA一类的解析问题
+ *      TODO 未来是否需要转换为不可变对象？
+ *      String done Int done Double Object Array bool nil Value
  */
 
 #include <vector>
@@ -52,11 +56,13 @@ class strstream: public stream<char> {
 
 template<typename T> class DFA {
         public:
-                virtual bool eat(stream<T>& foods) = 0;
-                virtual Value shit() = 0;
-                virtual void reset() = 0;
+                //virtual bool eat(stream<T>& foods) = 0;
+                virtual Value& eat(stream<T>& foods) = 0;
 
         protected:
+                virtual Value& shit() = 0;
+                virtual void wipe_ass() = 0;
+
                 bool in_range(const T& a, const T& min, const T& max) {
                         return (a >= min && a < max);
                 }
@@ -68,14 +74,13 @@ template<typename T> class DFA {
  */
 class IntDFA: public DFA<char> {
         public:
-                bool eat(stream<char>& foods) {
+                Value* eat(stream<char>& foods) {
                         char food;
-                        reset();
-
                         foods.next(food);
+
                         if (food != '-' && !in_range(food, '0', '9' + 1)) {
                                 foods.back(food);
-                                return false;
+                                return NULL;
                         } else {
                                 poo.push_back(food);
                         }
@@ -87,19 +92,19 @@ class IntDFA: public DFA<char> {
                                         break;
                                 }
                         }
-                        return true;
+                        return shit();
                 }
 
-                Value shit() {
-                        Value ret(atoi(poo.c_str()));
-                        return ret;
-                }
-
-                void reset() {
+        protected:
+                void wipe_ass() {
                         poo.clear();
                 }
 
-        private:
+                Value* shit() {
+                        Value* ret = new Value(atoi(poo.c_str()));
+                        wipe_ass();
+                        return ret;
+                }
                 string poo;
 };
 
@@ -118,15 +123,16 @@ class StringDFA: public DFA<char> {
                         //control_chars['u'] = '\f';
                 }
 
-                bool eat(stream<char>& foods) {
+                Value* eat(stream<char>& foods) {
                         char food;
                         bool in_control_char = false;
-                        reset();
 
                         foods.next(food);
+
+                        // Just in case....
                         if (food != '\"') {
                                 foods.back(food);
-                                return false;
+                                return NULL;
                         }
 
                         while (foods.next(food)) {
@@ -135,33 +141,34 @@ class StringDFA: public DFA<char> {
                                         continue;
                                 }
                                 if (!in_control_char && food == '\"') {
-                                        return true;
+                                        return shit();
                                         //break;
                                 }
                                 if (in_control_char) {
                                         in_control_char = false;
                                         if (!insert_control_char(food)) {
-                                                return false;
+                                                break;
                                         }
                                 } else {
                                         poo.push_back(food);
                                 }
                         }
-                        return false;
+                        return NULL;
                 }
 
-                Value shit() {
-                        string* s = new string();
 
-                        Value ret(s);
+
+        protected:
+                Value* shit() {
+                        Value* ret = new Value(new string(poo));
+                        wipe_ass();
                         return ret;
                 }
 
-                void reset() {
+                void wipe_ass() {
                         poo.clear();
                 }
 
-        private:
                 bool insert_control_char(const char& c) {
                         map<char, char>::iterator it = control_chars.find(c);
                         if (it == control_chars.end()) {
@@ -178,7 +185,7 @@ class StringDFA: public DFA<char> {
 
 class ValueDFA: public DFA<char> {
         public:
-                bool eat(stream<char>& foods) {
+                Value* eat(stream<char>& foods) {
                         char food;
                         bool ret;
                         foods.next(food);
@@ -190,9 +197,7 @@ class ValueDFA: public DFA<char> {
                                 // Int
                                 foods.back(food);
                                 IntDFA idfa;
-                                if (!idfa.eat(foods)){
-                                        ret = false;
-                                }
+                                return idfa.eat(foods);
                         } else if (food == '{') {
                                 foods.back(food);
                                 // Object
@@ -210,14 +215,12 @@ class ValueDFA: public DFA<char> {
                         }
                 }
 
-                void shit_value(stream<char>& foods, DFA<> dfa){
 
-                }
-                void reset() {
+                void wipe_ass() {
                 }
 
-                Value shit(){
-                        return Value::nil;
+                Value* shit(){
+                        return &Value::nil;
                 }
 };
 
@@ -226,10 +229,10 @@ class ObjectDFA: public DFA<char> {
 };
 class ArrayDFA: public DFA<char> {
         public:
-                bool eat(stream<char>& foods) {
+                Value* eat(stream<char>& foods) {
                         ValueDFA vdfa;
                         char food;
-                        reset();
+                        wipe_ass();
 
                         foods.next(food);
                         if (food != '[') {
@@ -238,13 +241,17 @@ class ArrayDFA: public DFA<char> {
                         }
                         while (foods.next(food)) {
                                 // TODO value dfa
-                                if (vdfa.eat(foods)){
+                                Value* v = vdfa.eat(foods);
+                                if (v == NULL){
+                                        return NULL;
+                                }else{
 
                                 }
                                 if (food == ','){
                                         continue;
                                 }else if(food == ']'){
-                                        return false;
+                                        // TODO we are done?
+                                        return NULL;
                                 }else {
                                         // TODO handle error
                                 }
@@ -252,33 +259,34 @@ class ArrayDFA: public DFA<char> {
                         return false;
                 }
 
-                Value shit() {
+        private:
+                Value* shit() {
                         //TODO err
-                        return Value(&poo);
+                        return new Value(poo);
                 }
 
-                void reset() {
-                        poo.clear();
+                void wipe_ass() {
+                        poo = NULL;
+                        //poo.clear();
                 }
-        private:
-                string poo;
+
+                vector<Value>* poo;
 
 };
 
-/*int main(int argc, char **argv) {
+int main(int argc, char **argv) {
         strstream ssi("199999");
         IntDFA id;
         StringDFA sd;
-        Value v;
-        if (id.eat(ssi)) {
-                v = id.shit();
-                cout << v << endl;
+        Value* v;
+        v = id.eat(ssi);
+        if (v != NULL){
+                cout << *v << endl;
         }
-
+        delete v;
         strstream sss("\"abckdf\nkk\"");
-
-        if (sd.eat(sss)) {
-                v = sd.shit();
-                cout << v << endl;
+        v = sd.eat(sss);
+        if (v != NULL){
+                cout << *v << endl;
         }
-}*/
+}

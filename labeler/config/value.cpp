@@ -1,7 +1,7 @@
 /*
  * config.cpp
  *
- *  Created on: 2014年11月25日
+ *  Created on: 2014,11,25
  *      Author: qin
  */
 #include "value.hpp"
