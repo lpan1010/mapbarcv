@@ -35,6 +35,7 @@ void video2image(const string &inputfile, const string& outputFolder) {
 	cout << video.get(CV_CAP_PROP_FPS) << endl;
 	fps = static_cast<int>(video.get(CV_CAP_PROP_FPS)); //幀率
 	frameCount = static_cast<int>(video.get(CV_CAP_PROP_FRAME_COUNT)); //幀总数
+	cout<<inputfile<<endl;
 	cout << "[" << width << "X" << height << "],fps=" << fps << ",frameCount="
 			<< frameCount << endl;
 
@@ -42,23 +43,30 @@ void video2image(const string &inputfile, const string& outputFolder) {
 		video >> src;
 		if (src.empty())
 			break;
+		count++;
+		//		cout<<count % 20 <<endl;
+		if (count % 10 != 0) {
+			continue;
+		}
 		Mat resize_img(720, 1280, src.type());
 		if (src.cols != 720 || src.rows != 1280) {
 			resize(src, resize_img, resize_img.size(), 0, 0, INTER_LINEAR);
 		}
-		count++;
-//		cout<<count % 20 <<endl;
-		if (count % 20 != 0) {
-			continue;
-		}
+
 		stringstream ss;
 		ss << count;
 		string name = ss.str();
-		cout << outputFolder + name.c_str() + ".jpg" << endl;
+//		cout << outputFolder + name.c_str() + ".jpg" << endl;
 		imwrite(outputFolder + name.c_str() + ".jpg", resize_img);
 	}
 }
-int findExtFile(string dir, vector<string> &files, const string& ext) {
+/**
+ *读取指定目录下以后缀ext结尾的文件
+ *@param dir 目录
+ *@param files 以ext结尾的文件集合
+ *@param 后缀标志
+ */
+int findExtFile(string& dir, vector<string> &files, const string& ext) {
 	DIR *dp;
 	struct dirent *dirp;
 	if ((dp = opendir(dir.c_str())) == NULL) {
@@ -76,10 +84,12 @@ int findExtFile(string dir, vector<string> &files, const string& ext) {
 	closedir(dp);
 	return 0;
 }
+/**
+ * 视频转图片
+ */
 void videotrainData() {
 	string root = "/home/share/待标注视频/";
-	string token[7] =
-			{ "new", "hk", "myh", "ssl", "xdy", "zhangxin", "zhaozz" };
+	string token[7] = { "晚上", "hk", "myh", "ssl", "xdy", "zhangxin", "zhaozz" };
 	for (int i = 0; i < 1; i++) {
 		//		cout<<root+token[i]+"/"<<endl;
 		vector<string> file;
@@ -95,6 +105,12 @@ void videotrainData() {
 		}
 	}
 }
+/**
+ * 切分
+ * @param s 待切分的字符串
+ * @param delim 切分标志
+ * @param elems 切分结果集合
+ */
 vector<string> split(const string &s, char delim, vector<string> &elems) {
 	stringstream ss(s);
 	string item;
@@ -103,6 +119,9 @@ vector<string> split(const string &s, char delim, vector<string> &elems) {
 	}
 	return elems;
 }
+/***
+ * 测试opencv自带的video.set()方法：跳到指定帧有bug
+ */
 void testjust() {
 	string videoFile = "/home/share/1362384151.mov";
 	VideoCapture video;
@@ -156,7 +175,9 @@ void testjust() {
 	}
 
 }
-
+/**
+ * 检测人工标注结果
+ */
 void checklabel() {
 	string imageFolder = "/home/share/待标注视频/hk/1362909815_t/";
 	string inputFile = "/home/share/lbs.txt";
@@ -201,6 +222,6 @@ void checklabel() {
 int main() {
 //	videotrainData();
 	//	video2image("/home/share/待标注视频/dxz/1364352112.mov", "/home/share/待标注视频/dxz/1364352112/");
-	checklabel();
+    checklabel();
 	return 0;
 }
